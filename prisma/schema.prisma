@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String               @id @default(cuid())
+  name           String?
+  email          String?              @unique
+  emailVerified  DateTime?            @map("email_verified")
+  role           String               @default("user")
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  clubsFollowing ClubFollowRelation[]
+  modifiedAt     DateTime?            @updatedAt @db.Timestamptz(6)
+  createdAt      DateTime             @default(now()) @db.Timestamptz(6)
+
+  @@map("users")
+}
+
+model Club {
+  id              Int                  @id @default(autoincrement())
+  img             String?
+  name            String               @unique
+  email           String?              @unique
+  description     String
+  credentials     ClubCredential?
+  website         String?              @unique
+  instagram       String?              @unique
+  facebook        String?              @unique
+  campusGroupLink String?              @unique
+  discord         String?              @unique
+  createdAt       DateTime             @default(now()) @db.Timestamptz(6)
+  modifiedAt      DateTime?            @updatedAt @db.Timestamptz(6)
+  deletedAt       DateTime?            @db.Timestamptz(6)
+  usersFollowing  ClubFollowRelation[]
+  clubMeetings    ClubMeeting[]
+
+  group      String
+  categories String[]
+  attributes String[]
+}
+
+model ClubCredential {
+  id          Int       @id @default(autoincrement())
+  club        Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId      Int       @unique
+  password    String
+  hasLoggedIn Boolean   @default(false)
+  iv          String
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  modifiedAt  DateTime? @updatedAt @db.Timestamptz(6)
+}
+
+// model Event {
+//   id              Int             @id @default(autoincrement())
+//   time            DateTime
+//   name            String
+//   description     String
+//   club            Club?           @relation(fields: [clubId], references: [id])
+//   clubId          Int
+//   createdAt       DateTime        @default(now()) @db.Timestamptz(6)
+//   modifiedAt      DateTime?       @db.Timestamptz(6)
+//   interestedUsers InterestEvent[]
+// }
+
+// model ClubAdmin {
+//   id     Int    @id @default(autoincrement())
+//   user   User   @relation(fields: [userId], references: [id])
+//   userId String
+//   club   Club   @relation(fields: [clubId], references: [id])
+//   clubId Int
+// }
+
+model ClubFollowRelation {
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  club   Club   @relation(fields: [clubId], references: [id])
+  clubId Int
+
+  @@id([userId, clubId])
+}
+
+// model InterestEvent {
+//   id      Int    @id @default(autoincrement())
+//   user    User   @relation(fields: [userId], references: [id])
+//   userId  String
+//   event   Event  @relation(fields: [eventId], references: [id])
+//   eventId Int
+// }
+
+//new table because this is what is RIGHT
+model ClubMeeting {
+  id           Int       @id @default(autoincrement())
+  club         Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId       Int
+  locationName String?
+  address      String?
+  latitude     Decimal?  @db.Decimal(8, 6)
+  longitude    Decimal?  @db.Decimal(9, 6)
+  startTime    String?
+  endTime      String?
+  day          Day?
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+  modifiedAt   DateTime? @updatedAt @db.Timestamptz(6)
+  deletedAt    DateTime? @db.Timestamptz(6)
+}
+
+model InterestForm {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  description String?
+  clubOfficer Boolean
+  addClubInfo Boolean
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  modifiedAt  DateTime? @updatedAt @db.Timestamptz(6)
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum Day {
+  Mon
+  Tues
+  Wed
+  Thurs
+  Fri
+  Sat
+  Sun
+}

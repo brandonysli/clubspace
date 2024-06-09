@@ -1,0 +1,28 @@
+# Ignore node modules
+node_modules
+
+# Ignore logs
+yarn-error.log
+
+# Ignore cache files
+.cache
+.next/cache
+
+# Ignore build output
+dist
+out
+build
+
+# Ignore git directory
+.git
+
+# Ignore other unnecessary files
+*.log
+*.csv
+.DS_Store
+LICENSE
+.editorconfig
+.eslintrc.json
+.prettierrc.js
+jest.config.js
+*.md

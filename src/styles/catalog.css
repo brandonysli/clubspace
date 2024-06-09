@@ -1,0 +1,7 @@
+.filter-section {
+  transition: transform 0.3s ease-out;
+  transform: translateY(-100%); /* initially hidden */
+}
+.filter-section.show {
+  transform: translateY(0); /* shown when .show class is added */
+}

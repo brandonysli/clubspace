@@ -1,0 +1,10 @@
+-- AlterTable
+ALTER TABLE "Club" ALTER COLUMN "imageId" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "ClubMeeting" ALTER COLUMN "clubId" DROP NOT NULL,
+ALTER COLUMN "locationId" DROP NOT NULL,
+ALTER COLUMN "meetingTimeId" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Image" ALTER COLUMN "clubId" DROP NOT NULL;

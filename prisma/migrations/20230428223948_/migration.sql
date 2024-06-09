@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "ClubMeetingTime" ALTER COLUMN "startTime" DROP NOT NULL,
+ALTER COLUMN "day" DROP NOT NULL;
