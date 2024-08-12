@@ -19,7 +19,7 @@
 
 ## About The Project
 
-Welcome to [clubspace](https://cornellclubspace.com), your one-stop destination for exploring Clubs @ Cornell!
+Welcome to clubspace, your one-stop destination for exploring Clubs @ Cornell!
 
 <!-- Build With -->
 
